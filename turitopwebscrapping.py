@@ -8,12 +8,17 @@ def webscrap(html):
     tabla = soup.table
 
     events = soup.find_all('tr',class_='bookings-calendar-event')
+    textcalendar = ''
 
     for event in events:
         esFecha = event.find('div',class_='bookings-history-date-event')
-        esStatus=event.find('div',class_='offline-bookings-event-status')
+        esStatus = event.find('div',class_='offline-bookings-event-status')
+        cleanstatus= esStatus.getText().strip('\n')
+        status=cleanstatus.strip(' ')
         esHour=event.find('div',class_='offline-bookings-event-time-inner')
+        hora=esHour.getText().strip('\n')
         esPeople=event.find('div',class_='offline-bookings-event-total-booked-seats opacity-lomed')
+
 
         esStatus.getText()
 
@@ -21,14 +26,21 @@ def webscrap(html):
             people = esPeople.getText().strip('\n')
         else:
             people = ''
+
         if esFecha != None:
             date = esFecha.getText()
-            print (  '\n' + date )
+            textcalendar = textcalendar + '\n' + date + '\n'
         else:
             date = ''
-        textcalendar = esHour.getText().strip('\n') + ' ' + esStatus.getText().strip('\n') + ' '  + people
 
-        return textcalendar
+        if 'Deshacer' in status:
+            status = 'Bloqueado'
+            peope = ''
+        
+
+        textcalendar = textcalendar + hora + ' ' + status + ' '  + people + '\n'
+
+    return textcalendar
 
 def weblogin(urlLogin,loginData,urlData):
     session = requests.session()
