@@ -4,3 +4,11 @@
 Cal*
 *.pyc
 *.DS_Store
+telepot*
+urllib*
+beautifulsoup*
+bs4*
+certifi*
+chardet*
+idna*
+requests*

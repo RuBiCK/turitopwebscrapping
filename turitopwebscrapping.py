@@ -1,15 +1,21 @@
 import requests
 import sys
+import logging
 from bs4 import BeautifulSoup
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
 def webscrap(html):
+    dias = 0
+    maxdias = 5
     soup = BeautifulSoup(html,'html.parser')
 
     tabla = soup.table
 
     events = soup.find_all('tr',class_='bookings-calendar-event')
     textcalendar = ''
-
+    
     for event in events:
         esFecha = event.find('div',class_='bookings-history-date-event')
         esStatus = event.find('div',class_='offline-bookings-event-status')
@@ -19,7 +25,6 @@ def webscrap(html):
         hora=esHour.getText().strip('\n')
         esPeople=event.find('div',class_='offline-bookings-event-total-booked-seats opacity-lomed')
 
-
         esStatus.getText()
 
         if esPeople != None:
@@ -28,6 +33,9 @@ def webscrap(html):
             people = ''
 
         if esFecha != None:
+	    dias +=1
+	    if dias == maxdias:
+	        break
             date = esFecha.getText()
             textcalendar = textcalendar + '\n' + date + '\n'
         else:
@@ -36,7 +44,6 @@ def webscrap(html):
         if 'Deshacer' in status:
             status = 'Bloqueado'
             peope = ''
-        
 
         textcalendar = textcalendar + hora + ' ' + status + ' '  + people + '\n'
 
@@ -48,5 +55,5 @@ def weblogin(urlLogin,loginData,urlData):
     cal=session.get(urlData)
     calendar=cal.text
     resultados = webscrap(calendar)
-
+    r.close
     return resultados
