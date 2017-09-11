@@ -6,6 +6,14 @@ from bs4 import BeautifulSoup
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+class Evento:
+	def __init__(self, game, date, time, people, status):
+		self.date = date
+		self.time = time
+		self.game = game
+		self.people = people
+		self.status = status
+
 def webscrap(html):
     dias = 0
     maxdias = 5
@@ -15,7 +23,7 @@ def webscrap(html):
 
     events = soup.find_all('tr',class_='bookings-calendar-event')
     textcalendar = ''
-    
+
     for event in events:
         esFecha = event.find('div',class_='bookings-history-date-event')
         esStatus = event.find('div',class_='offline-bookings-event-status')
