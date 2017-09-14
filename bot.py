@@ -41,7 +41,7 @@ def handle(msg):
         if str(chat_id) in CHATSID:
             print('Normal Message:', content_type, chat_type, chat_id)
             # flavor = telepot.flavor(msg)
-            command = msg['text']
+            command = lower(msg['text'])
             logger.info('Command: ' + command)
 
             if command == '/start':
@@ -53,14 +53,14 @@ def handle(msg):
             elif command == '/settings':
                 bot.sendMessage(chat_id, text="I cannot be configured via any settings yet. Check back soon!")
 
-            elif command == '/reservas Goya':
+            elif command == '/reservasgoya':
                 bot.sendMessage(chat_id, text="Dame unos segundos...")
                 logger.info('Empezando webscrapping')
                 calendario = ws.weblogin(loginUrl, loginData, urlData + 'P1')
                 logger.info('Finalizado Webscrapping')
                 bot.sendMessage(chat_id, text=calendario)
 
-            elif command == '/reservas Gotham':
+            elif command == '/reservasgotham':
                 bot.sendMessage(chat_id, text="A ver a ver... cuantos grupitos para Gotham tenemos :)")
                 logger.info('Empezando webscrapping')
                 calendario = ws.weblogin(loginUrl, loginData, urlData + 'P2')
