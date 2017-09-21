@@ -7,14 +7,26 @@ import turitop
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+EMAIL = os.environ['EMAIL']
+PASSWORD = os.environ['PASSWORD']
+COMPANY = os.environ['COMPANY']
+
+loginUrl='https://app.turitop.com/admin/login/es/'
+urlData = 'https://app.turitop.com/admin/company/' + COMPANY + '/calendar/monthly/' #Leter will add the service at the end of the URL
+
+loginData = {
+    'user': EMAIL,
+    'password': PASSWORD,
+    'submit': 'login',
+}
+
 
 def webscrapServices(html):
 	soup = BeautifulSoup(html,'html.parser')
 	tabla = soup.table
-	events = soup.find_all('tr',class_='bookings-calendar-table')
+	events = soup.find_all('td',class_='offline-bookings-event-date-oneline')
 
-
-def webscrap(html):
+def webscrap(html): #TODO cambiarlo por url
 	dias = 0
 	maxdias = 5
 	soup = BeautifulSoup(html,'html.parser')
@@ -58,7 +70,6 @@ def webscrap(html):
 
 		textcalendar = textcalendar + hora + ' ' + status + ' '  + people + '\n'
 		event = Event(gameInvoked, esFecha, esHour, esPeople, st)
-
 	logger.info(schedule)
     return textcalendar
 
@@ -70,3 +81,6 @@ def weblogin(urlLogin,loginData,urlData):
     resultados = webscrap(calendar)
     r.close
     return resultados
+
+if __name__ == "__main__":
+	turitopConn = weblogin(loginUrl + gameInvoked, loginData,urlData)
