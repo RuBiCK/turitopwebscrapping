@@ -2,38 +2,41 @@ import requests
 import sys
 import logging
 from bs4 import BeautifulSoup
+import turitop
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-class Evento:
-	def __init__(self, game, date, time, people, status):
-		self.date = date
-		self.time = time
-		self.game = game
-		self.people = people
-		self.status = status
+
+def webscrapServices(html):
+	soup = BeautifulSoup(html,'html.parser')
+	tabla = soup.table
+	events = soup.find_all('tr',class_='bookings-calendar-table')
+
 
 def webscrap(html):
-    dias = 0
-    maxdias = 5
-    soup = BeautifulSoup(html,'html.parser')
+	dias = 0
+	maxdias = 5
+	soup = BeautifulSoup(html,'html.parser')
 
-    tabla = soup.table
+	tabla = soup.table
 
-    events = soup.find_all('tr',class_='bookings-calendar-event')
-    textcalendar = ''
+	events = soup.find_all('tr',class_='bookings-calendar-event')
+	textcalendar = ''
+	schedule = []
 
-    for event in events:
-        esFecha = event.find('div',class_='bookings-history-date-event')
-        esStatus = event.find('div',class_='offline-bookings-event-status')
-        cleanstatus= esStatus.getText().strip('\n')
-        status=cleanstatus.strip(' ')
-        esHour=event.find('div',class_='offline-bookings-event-time-inner')
-        hora=esHour.getText().strip('\n')
-        esPeople=event.find('div',class_='offline-bookings-event-total-booked-seats opacity-lomed')
+	for eventHtml in events:
+		esFecha = eventHtml.find('div',class_='bookings-history-date-event')
+		esStatus = eventHtml.find('div',class_='offline-bookings-event-status')
+		cleanstatus= esStatus.getText().strip('\n')
+		status=cleanstatus.strip(' ')
+		esHour=eventHtml.find('div',class_='offline-bookings-event-time-inner')
+		hora=esHour.getText().strip('\n')
+		esPeople=eventHtml.find('div',class_='offline-bookings-event-total-booked-seats opacity-lomed')
+		st = esStatus.getText()
 
-        esStatus.getText()
+		logger.info('event')
+		schedule.append(event)
 
         if esPeople != None:
             people = esPeople.getText().strip('\n')
@@ -49,12 +52,14 @@ def webscrap(html):
         else:
             date = ''
 
-        if 'Deshacer' in status:
-            status = 'Bloqueado'
-            peope = ''
+		if 'Deshacer' in status:
+			status = 'Bloqueado'
+			peope = ''
 
-        textcalendar = textcalendar + hora + ' ' + status + ' '  + people + '\n'
+		textcalendar = textcalendar + hora + ' ' + status + ' '  + people + '\n'
+		event = Event(gameInvoked, esFecha, esHour, esPeople, st)
 
+	logger.info(schedule)
     return textcalendar
 
 def weblogin(urlLogin,loginData,urlData):
