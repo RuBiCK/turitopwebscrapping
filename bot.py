@@ -77,3 +77,7 @@ def handle(msg):
 
         logger.info(urlData)
         return('Message sent')
+
+
+if __name__ == "__main__":
+	print (ws.weblogin(loginUrl, loginData, urlData + 'P1'))
